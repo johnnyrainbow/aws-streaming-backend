@@ -29,11 +29,39 @@ const mediaLiveChannelConfig = JSON.parse(fs.readFileSync(mediaLiveChannelConfig
 const mediaLiveInputConfigPath = "configurations/MediaLive/CreateInput.json"
 const mediaLiveInputConfig = JSON.parse(fs.readFileSync(mediaLiveInputConfigPath, 'utf8'));
 
-// createMediaPackageChannel()
+//CloudFront config
+const cloudfrontConfigPath = "configurations/CloudFront/Configuration.json"
+const cloudfrontConfig = JSON.parse(fs.readFileSync(cloudfrontConfigPath, 'utf8'));
 
-const destinations = await createMediaLiveInput()
-const result = await createMediaLiveChannel(destinations)
-console.log(result)
+
+addNewStream()
+//TODO ADD REMOVE STREAM
+async function addNewStream() {
+    const mediaPackageChannelEndpoints = await createMediaPackageChannel()
+    console.log(JSON.stringify(mediaPackageChannelEndpoints))
+    await createMediaPackageCFDistro(mediaPackageChannelEndpoints)
+    return
+    const inputData = await createMediaLiveInput()
+    console.log(inputData) //PROVIDE TO OBS inputData.Destinations
+    console.log(inputData.Destinations)
+    const mediaLiveChannelRes = await createMediaLiveChannel(inputData, mediaPackageChannelEndpoints)
+    console.log(mediaLiveChannelRes)
+}
+
+//cloudfront
+
+async function createMediaPackageCFDistro(mediaPackageChannelEndpoints) {
+    try {
+        const { url } = mediaPackageChannelEndpoints
+        const domain = url.split("https://")[1].split("/out/v1")[0]
+        cloudfrontConfig.DistributionConfig.Origins.Items[0].DomainName = domain
+        const chnlResult = await cloudfront.createDistribution(cloudfrontConfig).promise()
+        console.log(chnlResult)
+    } catch (e) {
+        console.log(e)
+    }
+
+}
 async function createMediaPackageChannel() {
     //TODO https://github.com/aws/aws-sdk-php/issues/1656
     const params = {
@@ -43,11 +71,13 @@ async function createMediaPackageChannel() {
     try {
         const chnlResult = await mediaPackage.createChannel(params).promise()
 
+        const { IngestEndpoints } = chnlResult.HlsIngest
         const channelId = chnlResult.Id
-        endpointConfig.ChannelId = channelId
-        endpointConfig.Id = uuid.v4()
+        mediaPackageEndpointConfig.ChannelId = channelId
+        mediaPackageEndpointConfig.Id = uuid.v4()
         const endpntResult = await mediaPackage.createOriginEndpoint(mediaPackageEndpointConfig).promise()
         console.log(endpntResult)
+        return { IngestEndpoints, url: endpntResult.Url }
     } catch (e) {
         console.log(e)
     }
@@ -57,19 +87,26 @@ async function createMediaLiveInput() {
     try {
 
         const inputResult = await mediaLive.createInput(mediaLiveInputConfig).promise()
-
+        console.log(inputResult)
         //return destination urls, ips, ports
-        return inputResult.Input.Destinations
+        return inputResult.Input
     } catch (e) {
         console.log(e)
     }
 
 }
-async function createMediaLiveChannel() {
+async function createMediaLiveChannel(inputData, mediaPackageChannelEndpoints) {
     try {
+        console.log(mediaLiveChannelConfig.Destinations.Settings)
+        console.log(mediaPackageChannelEndpoints)
+        for (var i = 0; i < 2; i++) { //i == 0, i==1
+            mediaLiveChannelConfig.Destinations[0].Settings[i].Url = mediaPackageChannelEndpoints[i].Url
+            mediaLiveChannelConfig.Destinations[0].Settings[i].Username = mediaPackageChannelEndpoints[i].Username
+            // mediaLiveChannelConfig.Destinations[0].Settings[i].Password = mediaPackageChannelEndpoints[i].Password
+        }
 
-        mediaLiveChannelConfig.InputAttachments[0].InputAttachmentName = "liveInput"
-        mediaLiveChannelConfig.InputAttachments[0].InputId = "4424484"
+        mediaLiveChannelConfig.InputAttachments[0].InputAttachmentName = inputData.Name
+        mediaLiveChannelConfig.InputAttachments[0].InputId = inputData.Id
 
         const chnlResult = await mediaLive.createChannel(mediaLiveChannelConfig).promise()
         return chnlResult

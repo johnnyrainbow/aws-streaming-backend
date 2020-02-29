@@ -1,0 +1,322 @@
+{
+    "DistributionConfig": {
+        "CallerReference": "1582953508079",
+        "Aliases": {
+            "Quantity": 0,
+            "Items": []
+        },
+        "DefaultRootObject": "",
+        "Origins": {
+            "Quantity": 2,
+            "Items": [
+                {
+                    "Id": "EMP-15595674c0604ed6",
+                    "DomainName": "15595674c0604ed6.mediapackage.eu-central-1.amazonaws.com",
+                    "OriginPath": "",
+                    "CustomHeaders": {
+                        "Quantity": 0,
+                        "Items": []
+                    },
+                    "CustomOriginConfig": {
+                        "HTTPPort": 80,
+                        "HTTPSPort": 443,
+                        "OriginProtocolPolicy": "match-viewer",
+                        "OriginSslProtocols": {
+                            "Quantity": 3,
+                            "Items": [
+                                "TLSv1",
+                                "TLSv1.1",
+                                "TLSv1.2"
+                            ]
+                        },
+                        "OriginReadTimeout": 30,
+                        "OriginKeepaliveTimeout": 5
+                    }
+                },
+                {
+                    "Id": "TEMP_ORIGIN_ID/channel",
+                    "DomainName": "mediapackage.amazonaws.com",
+                    "OriginPath": "",
+                    "CustomHeaders": {
+                        "Quantity": 0,
+                        "Items": []
+                    },
+                    "CustomOriginConfig": {
+                        "HTTPPort": 80,
+                        "HTTPSPort": 443,
+                        "OriginProtocolPolicy": "match-viewer",
+                        "OriginSslProtocols": {
+                            "Quantity": 3,
+                            "Items": [
+                                "TLSv1",
+                                "TLSv1.1",
+                                "TLSv1.2"
+                            ]
+                        },
+                        "OriginReadTimeout": 30,
+                        "OriginKeepaliveTimeout": 5
+                    }
+                }
+            ]
+        },
+        "OriginGroups": {
+            "Quantity": 0,
+            "Items": []
+        },
+        "DefaultCacheBehavior": {
+            "TargetOriginId": "TEMP_ORIGIN_ID/channel",
+            "ForwardedValues": {
+                "QueryString": true,
+                "Cookies": {
+                    "Forward": "none"
+                },
+                "Headers": {
+                    "Quantity": 0,
+                    "Items": []
+                },
+                "QueryStringCacheKeys": {
+                    "Quantity": 3,
+                    "Items": [
+                        "end",
+                        "m",
+                        "start"
+                    ]
+                }
+            },
+            "TrustedSigners": {
+                "Enabled": false,
+                "Quantity": 0,
+                "Items": []
+            },
+            "ViewerProtocolPolicy": "redirect-to-https",
+            "MinTTL": 0,
+            "AllowedMethods": {
+                "Quantity": 2,
+                "Items": [
+                    "HEAD",
+                    "GET"
+                ],
+                "CachedMethods": {
+                    "Quantity": 2,
+                    "Items": [
+                        "HEAD",
+                        "GET"
+                    ]
+                }
+            },
+            "SmoothStreaming": false,
+            "DefaultTTL": 86400,
+            "MaxTTL": 31536000,
+            "Compress": false,
+            "LambdaFunctionAssociations": {
+                "Quantity": 0,
+                "Items": []
+            },
+            "FieldLevelEncryptionId": ""
+        },
+        "CacheBehaviors": {
+            "Quantity": 2,
+            "Items": [
+                {
+                    "PathPattern": "index.ism/*",
+                    "TargetOriginId": "EMP-15595674c0604ed6",
+                    "ForwardedValues": {
+                        "QueryString": true,
+                        "Cookies": {
+                            "Forward": "none"
+                        },
+                        "Headers": {
+                            "Quantity": 0,
+                            "Items": []
+                        },
+                        "QueryStringCacheKeys": {
+                            "Quantity": 3,
+                            "Items": [
+                                "end",
+                                "m",
+                                "start"
+                            ]
+                        }
+                    },
+                    "TrustedSigners": {
+                        "Enabled": false,
+                        "Quantity": 0,
+                        "Items": []
+                    },
+                    "ViewerProtocolPolicy": "redirect-to-https",
+                    "MinTTL": 0,
+                    "AllowedMethods": {
+                        "Quantity": 2,
+                        "Items": [
+                            "HEAD",
+                            "GET"
+                        ],
+                        "CachedMethods": {
+                            "Quantity": 2,
+                            "Items": [
+                                "HEAD",
+                                "GET"
+                            ]
+                        }
+                    },
+                    "SmoothStreaming": true,
+                    "DefaultTTL": 86400,
+                    "MaxTTL": 31536000,
+                    "Compress": false,
+                    "LambdaFunctionAssociations": {
+                        "Quantity": 0,
+                        "Items": []
+                    },
+                    "FieldLevelEncryptionId": ""
+                },
+                {
+                    "PathPattern": "*",
+                    "TargetOriginId": "EMP-15595674c0604ed6",
+                    "ForwardedValues": {
+                        "QueryString": true,
+                        "Cookies": {
+                            "Forward": "none"
+                        },
+                        "Headers": {
+                            "Quantity": 0,
+                            "Items": []
+                        },
+                        "QueryStringCacheKeys": {
+                            "Quantity": 3,
+                            "Items": [
+                                "end",
+                                "m",
+                                "start"
+                            ]
+                        }
+                    },
+                    "TrustedSigners": {
+                        "Enabled": false,
+                        "Quantity": 0,
+                        "Items": []
+                    },
+                    "ViewerProtocolPolicy": "redirect-to-https",
+                    "MinTTL": 0,
+                    "AllowedMethods": {
+                        "Quantity": 2,
+                        "Items": [
+                            "HEAD",
+                            "GET"
+                        ],
+                        "CachedMethods": {
+                            "Quantity": 2,
+                            "Items": [
+                                "HEAD",
+                                "GET"
+                            ]
+                        }
+                    },
+                    "SmoothStreaming": false,
+                    "DefaultTTL": 86400,
+                    "MaxTTL": 31536000,
+                    "Compress": false,
+                    "LambdaFunctionAssociations": {
+                        "Quantity": 0,
+                        "Items": []
+                    },
+                    "FieldLevelEncryptionId": ""
+                }
+            ]
+        },
+        "CustomErrorResponses": {
+            "Quantity": 11,
+            "Items": [
+                {
+                    "ErrorCode": 400,
+                    "ResponsePagePath": "",
+                    "ResponseCode": "",
+                    "ErrorCachingMinTTL": 1
+                },
+                {
+                    "ErrorCode": 403,
+                    "ResponsePagePath": "",
+                    "ResponseCode": "",
+                    "ErrorCachingMinTTL": 1
+                },
+                {
+                    "ErrorCode": 404,
+                    "ResponsePagePath": "",
+                    "ResponseCode": "",
+                    "ErrorCachingMinTTL": 1
+                },
+                {
+                    "ErrorCode": 405,
+                    "ResponsePagePath": "",
+                    "ResponseCode": "",
+                    "ErrorCachingMinTTL": 1
+                },
+                {
+                    "ErrorCode": 414,
+                    "ResponsePagePath": "",
+                    "ResponseCode": "",
+                    "ErrorCachingMinTTL": 1
+                },
+                {
+                    "ErrorCode": 416,
+                    "ResponsePagePath": "",
+                    "ResponseCode": "",
+                    "ErrorCachingMinTTL": 1
+                },
+                {
+                    "ErrorCode": 500,
+                    "ResponsePagePath": "",
+                    "ResponseCode": "",
+                    "ErrorCachingMinTTL": 1
+                },
+                {
+                    "ErrorCode": 501,
+                    "ResponsePagePath": "",
+                    "ResponseCode": "",
+                    "ErrorCachingMinTTL": 1
+                },
+                {
+                    "ErrorCode": 502,
+                    "ResponsePagePath": "",
+                    "ResponseCode": "",
+                    "ErrorCachingMinTTL": 1
+                },
+                {
+                    "ErrorCode": 503,
+                    "ResponsePagePath": "",
+                    "ResponseCode": "",
+                    "ErrorCachingMinTTL": 1
+                },
+                {
+                    "ErrorCode": 504,
+                    "ResponsePagePath": "",
+                    "ResponseCode": "",
+                    "ErrorCachingMinTTL": 1
+                }
+            ]
+        },
+        "Comment": "Managed by MediaPackage - MyTestChannel",
+        "Logging": {
+            "Enabled": false,
+            "IncludeCookies": false,
+            "Bucket": "",
+            "Prefix": ""
+        },
+        "PriceClass": "PriceClass_All",
+        "Enabled": true,
+        "ViewerCertificate": {
+            "CloudFrontDefaultCertificate": true,
+            "MinimumProtocolVersion": "TLSv1",
+            "CertificateSource": "cloudfront"
+        },
+        "Restrictions": {
+            "GeoRestriction": {
+                "RestrictionType": "none",
+                "Quantity": 0,
+                "Items": []
+            }
+        },
+        "WebACLId": "",
+        "HttpVersion": "http2",
+        "IsIPV6Enabled": true
+    }
+}

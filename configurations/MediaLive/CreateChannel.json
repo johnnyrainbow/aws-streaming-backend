@@ -746,7 +746,7 @@
     "Resolution": "HD"
   },
   "LogLevel": "DISABLED",
-  "Name": "testchannel",
+  "Name": "LiveChannel",
   "RoleArn": "arn:aws:iam::932393112262:role/MediaLiveAccessRole",
   "Tags": {}
 }
