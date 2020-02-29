@@ -1,0 +1,29 @@
+{
+    "Id": "",
+    "ChannelId": "",
+    "Description": "",
+    "StartoverWindowSeconds": 0,
+    "TimeDelaySeconds": 0,
+    "ManifestName": "index",
+    "Whitelist": [],
+    "HlsPackage": {
+      "SegmentDurationSeconds": 6,
+      "PlaylistWindowSeconds": 60,
+      "AdMarkers": "NONE",
+      "ProgramDateTimeIntervalSeconds": 0,
+      "UseAudioRenditionGroup": false,
+      "IncludeIframeOnlyStream": false,
+      "AdTriggers": [
+        "SPLICE_INSERT",
+        "PROVIDER_ADVERTISEMENT",
+        "DISTRIBUTOR_ADVERTISEMENT",
+        "PROVIDER_PLACEMENT_OPPORTUNITY",
+        "DISTRIBUTOR_PLACEMENT_OPPORTUNITY"
+      ],
+      "AdsOnDeliveryRestrictions": "RESTRICTED",
+      "StreamSelection": {
+        "StreamOrder": "ORIGINAL"
+      }
+    },
+    "Origination": "ALLOW"
+  }

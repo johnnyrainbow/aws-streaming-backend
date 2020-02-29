@@ -1,0 +1,18 @@
+{
+    "Destinations": [
+        {
+            "StreamName": "live/mystream"
+        },
+        {
+            "StreamName": "live/mystream"
+        }
+    ],
+    "MediaConnectFlows": [],
+    "Name": "liveInput",
+    "InputSecurityGroups": [
+        "8647717"
+    ],
+    "Sources": [],
+    "Tags": {},
+    "Type": "RTMP_PUSH"
+}
