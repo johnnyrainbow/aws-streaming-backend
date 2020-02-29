@@ -55,6 +55,7 @@ async function createMediaPackageCFDistro(mediaPackageChannelEndpoints) {
         const { url } = mediaPackageChannelEndpoints
         const domain = url.split("https://")[1].split("/out/v1")[0]
         cloudfrontConfig.DistributionConfig.Origins.Items[0].DomainName = domain
+        cloudfrontConfig.DistributionConfig.CallerReference = uuid.v4()
         const chnlResult = await cloudfront.createDistribution(cloudfrontConfig).promise()
         console.log(chnlResult)
     } catch (e) {
