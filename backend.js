@@ -19,6 +19,7 @@ const mediaLive = new AWS.MediaLive()
 const mediaPackage = new AWS.MediaPackage()
 const cloudfront = new AWS.CloudFront()
 const ssm = new AWS.SSM()
+
 //MediaPackage config
 const mediaPackageEndpointConfigPath = "configurations/MediaPackage/CreateOriginEndpoint.json"
 const mediaPackageEndpointConfig = JSON.parse(fs.readFileSync(mediaPackageEndpointConfigPath, 'utf8'));
@@ -33,41 +34,76 @@ const mediaLiveInputConfig = JSON.parse(fs.readFileSync(mediaLiveInputConfigPath
 //CloudFront config
 const cloudfrontConfigPath = "configurations/CloudFront/Configuration.json"
 const cloudfrontConfig = JSON.parse(fs.readFileSync(cloudfrontConfigPath, 'utf8'));
-let mediaPackageChannelEndpoints = {
-    url: "https://528dc4ef17d725ed.mediapackage.eu-central-1.amazonaws.com/out/v1/3036c9d5828942ca8e7af54c4d749503/index.m3u8"
-}
- createMediaPackageCFDistro(mediaPackageChannelEndpoints)
-// addNewStream()
+
+
+addNewStream()
 //TODO ADD REMOVE STREAM
 //TODO full rollback system if any part fails, should remove all created ones. use a describer object {} to store all relevant ids and be ultimately returned
 async function addNewStream() {
     const mediaPackageChannelEndpoints = await createMediaPackageChannel()
+    console.log("MEDIA PACKAGE CHANNEL RESPONSE")
     console.log(mediaPackageChannelEndpoints)
-    await createMediaPackageCFDistro(mediaPackageChannelEndpoints)
+
+    // await createMediaPackageCFDistro(mediaPackageChannelEndpoints)
 
 
     const inputData = await createMediaLiveInput()
+    console.log("MEDIA LIVE INPUT RESPONSE")
     console.log(inputData) //PROVIDE TO OBS inputData.Destinations
-    console.log(inputData.Destinations)
+
     const passwordParamKey = await createMediaLiveSSMParameter(mediaPackageChannelEndpoints.IngestEndpoints)
+    console.log("SSM KEY RESPONSE")
+    console.log(passwordParamKey)
+
+
     const mediaLiveChannelRes = await createMediaLiveChannel(inputData, mediaPackageChannelEndpoints.IngestEndpoints, passwordParamKey)
+    console.log("MEDIA LIVE CHANNEL CREATE RESPONSE")
     console.log(mediaLiveChannelRes)
-    //finally start the channel
+
+    //start the channel VIA endpoint
+    // const startResult = await startMediaLiveChannel(mediaLiveChannelRes.Channel.Id)
+    // console.log(startResult)
+}
+
+async function startMediaLiveChannel(channelId) {
+    try {
+        const result = await mediaLive.startChannel({ ChannelId: channelId }).promise()
+        return result
+    } catch (e) {
+        console.log(e)
+    }
+}
+//cloudfront
+async function updateMediaPackageCFDistro(mediaPackageChannelEndpoints) {
+    try {
+        var params = {
+            CloudFrontOriginAccessIdentityConfig: { /* required */
+                CallerReference: uuid.v4(), /* required */
+                Comment: 'testnewOrigin' /* required */
+            }
+        };
+        const chnlResult = await cloudfront.tagResource(cloudfrontConfig).promise()
+        console.log("CLOUDFRONT DISTRO CREATE RESPONSE")
+        console.log(chnlResult)
+    } catch (e) {
+        console.log(e)
+    }
+
 }
 
 //cloudfront
-
 async function createMediaPackageCFDistro(mediaPackageChannelEndpoints) {
     try {
+        const { arn } = mediaPackageChannelEndpoints
+        cloudfrontConfig.DistributionConfigWithTags.Tags.Items[0].Value = arn
+
         const { url } = mediaPackageChannelEndpoints
         const domain = url.split("https://")[1].split("/out/v1")[0]
-        console.log(domain)
-        const path = url.split(".com")[1].split("index.m3u8")[0]
-        console.log(path)
+
         cloudfrontConfig.DistributionConfigWithTags.DistributionConfig.Origins.Items[0].DomainName = domain
-        // cloudfrontConfig.DistributionConfig.Origins.Items[0].OriginPath = path
         cloudfrontConfig.DistributionConfigWithTags.DistributionConfig.CallerReference = uuid.v4()
         const chnlResult = await cloudfront.createDistributionWithTags(cloudfrontConfig).promise()
+        console.log("CLOUDFRONT DISTRO CREATE RESPONSE")
         console.log(chnlResult)
     } catch (e) {
         console.log(e)
@@ -85,11 +121,12 @@ async function createMediaPackageChannel() {
 
         const { IngestEndpoints } = chnlResult.HlsIngest
         const channelId = chnlResult.Id
+
         mediaPackageEndpointConfig.ChannelId = channelId
         mediaPackageEndpointConfig.Id = uuid.v4()
         const endpntResult = await mediaPackage.createOriginEndpoint(mediaPackageEndpointConfig).promise()
-        console.log(endpntResult)
-        return { IngestEndpoints, url: endpntResult.Url }
+
+        return { IngestEndpoints, url: endpntResult.Url, arn: chnlResult.Arn }
     } catch (e) {
         console.log(e)
     }
@@ -97,6 +134,9 @@ async function createMediaPackageChannel() {
 
 async function createMediaLiveInput() {
     try {
+
+        for (var i = 0; i < 2; i++)
+            mediaLiveInputConfig.Destinations[i].StreamName = `StreamingStartup/${uuid.v4()}`
 
         const inputResult = await mediaLive.createInput(mediaLiveInputConfig).promise()
         console.log(inputResult)
@@ -112,7 +152,7 @@ async function createMediaLiveSSMParameter(mediaPackageChannelEndpoints) {
     try {
         const generatedId = uuid.v4()
         var params = {
-            Name: `/medialive/${generatedId}`, /* required */
+            Name: `/medialive/${generatedId} `, /* required */
             Type: "String", /* required */
             Value: mediaPackageChannelEndpoints[0].Password, /* required */
             Description: 'test',
@@ -128,16 +168,15 @@ async function createMediaLiveSSMParameter(mediaPackageChannelEndpoints) {
 }
 async function createMediaLiveChannel(inputData, mediaPackageChannelEndpoints, paramKey) {
     try {
-        console.log(mediaLiveChannelConfig.Destinations.Settings)
-        console.log(mediaPackageChannelEndpoints)
+
         for (var i = 0; i < 2; i++) { //i == 0, i==1
             mediaLiveChannelConfig.Destinations[0].Settings[i].Url = mediaPackageChannelEndpoints[i].Url
             mediaLiveChannelConfig.Destinations[0].Settings[i].Username = mediaPackageChannelEndpoints[i].Username
-            mediaLiveChannelConfig.Destinations[0].Settings[i].PasswordParam = `/medialive/${paramKey}`
+            mediaLiveChannelConfig.Destinations[0].Settings[i].PasswordParam = `/medialive/${paramKey} `
 
             // mediaLiveChannelConfig.Destinations[0].Settings[i].Password = mediaPackageChannelEndpoints[i].Password
         }
-        console.log("set input name as " + inputData.Name + " AND ID " + inputData.Id)
+
         mediaLiveChannelConfig.InputAttachments[0].InputAttachmentName = inputData.Name
         mediaLiveChannelConfig.InputAttachments[0].InputId = inputData.Id
 
