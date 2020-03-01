@@ -1,15 +1,10 @@
 {
-  "ChannelClass": "STANDARD",
+  "ChannelClass": "SINGLE_PIPELINE",
   "Destinations": [
     {
       "Id": "destination1",
       "MediaPackageSettings": [],
       "Settings": [
-        {
-          "PasswordParam": "INSERT_PASSWORD_PARAM_HERE",
-          "Url": "INSERT_URL_HERE",
-          "Username": "INSERT_USERNAME_HERE"
-        },
         {
           "PasswordParam": "INSERT_PASSWORD_PARAM_HERE",
           "Url": "INSERT_URL_HERE",

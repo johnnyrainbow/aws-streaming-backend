@@ -2,9 +2,6 @@
     "Destinations": [
         {
             "StreamName": "live/mystream"
-        },
-        {
-            "StreamName": "live/mystream"
         }
     ],
     "MediaConnectFlows": [],

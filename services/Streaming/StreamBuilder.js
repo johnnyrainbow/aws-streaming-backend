@@ -19,7 +19,7 @@ class StreamBuilder {
             //MediaPackage creation
             const mpcResult = this.rbHandler.register(await this.createMediaPackageChannel())
             const mpoeResult = this.rbHandler.register(await this.createMediaPackageOriginEndpoint(mpcResult.chnlResult))
-            const mpcfResult = this.rbHandler.register(await this.createMediaPackageCFDistro(mpoeResult.endpntResult))
+            const mpcfResult = this.rbHandler.register(await this.createMediaPackageCFDistro(mpcResult.chnlResult, mpoeResult.endpntResult))
 
             //MediaLive creation
             const cmliResult = this.rbHandler.register(await this.createMediaLiveInput())
@@ -28,15 +28,15 @@ class StreamBuilder {
             // new StreamDestroyer().destroy()
         } catch (e) {
             //should do rollback here?
-            this.rbHandler.confusedScreaming()
+            this.rbHandler.confusedScreaming(e)
         }
     }
 
     //cloudfront
-    async createMediaPackageCFDistro(mediaPackageEndpoints) {
+    async createMediaPackageCFDistro(mediaPackageChannel, mediaPackageEndpoints) {
         const { cloudfront } = dependencies.AWS
 
-        const arn = mediaPackageEndpoints.Arn
+        const arn = mediaPackageChannel.Arn
         cloudfrontConfig.DistributionConfigWithTags.Tags.Items[0].Value = arn
 
         const url = mediaPackageEndpoints.Url
@@ -52,11 +52,11 @@ class StreamBuilder {
     async createMediaLiveChannel(inputData, mediaPackageChannelEndpoints, paramKey) {
         const { mediaLive } = dependencies.AWS
 
-        for (var i = 0; i < 2; i++) { //i == 0, i==1
-            mediaLiveChannelConfig.Destinations[0].Settings[i].Url = mediaPackageChannelEndpoints[i].Url
-            mediaLiveChannelConfig.Destinations[0].Settings[i].Username = mediaPackageChannelEndpoints[i].Username
-            mediaLiveChannelConfig.Destinations[0].Settings[i].PasswordParam = `/medialive/${paramKey} `
-        }
+
+        mediaLiveChannelConfig.Destinations[0].Settings[0].Url = mediaPackageChannelEndpoints[0].Url
+        mediaLiveChannelConfig.Destinations[0].Settings[0].Username = mediaPackageChannelEndpoints[0].Username
+        mediaLiveChannelConfig.Destinations[0].Settings[0].PasswordParam = `/medialive/${paramKey} `
+
 
         mediaLiveChannelConfig.InputAttachments[0].InputAttachmentName = inputData.Name
         mediaLiveChannelConfig.InputAttachments[0].InputId = inputData.Id
@@ -87,8 +87,8 @@ class StreamBuilder {
     async createMediaLiveInput() {
         const { mediaLive } = dependencies.AWS
 
-        for (var i = 0; i < 2; i++)
-            mediaLiveInputConfig.Destinations[i].StreamName = `StreamingStartup/${uuid.v4()}`
+
+        mediaLiveInputConfig.Destinations[0].StreamName = `StreamingStartup/${uuid.v4()}`
 
         const inputResult = await mediaLive.createInput(mediaLiveInputConfig).promise()
 
