@@ -1,13 +1,11 @@
 
 const mediaPackageEndpointConfig = require("./configurations/MediaPackage/CreateOriginEndpoint.json")
-const mediaLiveChannelConfig = require("./configurations/MediaLive/CreateChannel.json")
+const mediaLiveChannelConfig = require("./configurations/MediaLive/CreateChannelLive.json")
 const mediaLiveInputConfig = require("./configurations/MediaLive/CreateInput.json")
 const cloudfrontConfig = require("./configurations/CloudFront/Configuration.json")
 const uuid = require("uuid")
 const RollbackHandler = require("./RollbackHandler")
 
-//TEMPORARY FOR TESTING
-// const { StreamDestroyer } = require("./StreamDestroyer")
 let dependencies = {}
 
 class StreamBuilder {

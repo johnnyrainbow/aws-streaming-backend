@@ -9,11 +9,11 @@ const fs = require('fs');
 
 
 const StreamBuilder = require("./services/Streaming/StreamBuilder")
-const StreamDestroyer = require("./services/Streaming/StreamDestroyer")
+
 const port = process.env.PORT || 3000;
 
 AWS.config.update({
-    region: 'eu-central-1',
+    region: 'ap-southeast-2',
     accessKeyId: process.env.AWS_LIVESTREAM_SDK_ACCESS_KEY,
     secretAccessKey: process.env.AWS_LIVESTREAM_SDK_SECRET_ACCESS_KEY
 });
@@ -33,7 +33,7 @@ const awsDependencies = {
 
 //set dependencies
 StreamBuilder.dependencies.AWS = awsDependencies
-StreamDestroyer.dependencies.AWS = awsDependencies
+
 
 app.use(bodyParser.json({ verify: function (req, res, buf) { req.rawBody = buf } }))
 

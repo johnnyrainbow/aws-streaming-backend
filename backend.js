@@ -4,7 +4,7 @@ const uuid = require("uuid")
 const fs = require('fs');
 
 AWS.config.update({
-    region: 'eu-central-1',
+    region: 'ap-southeast-2',
     accessKeyId: process.env.AWS_LIVESTREAM_SDK_ACCESS_KEY,
     secretAccessKey: process.env.AWS_LIVESTREAM_SDK_SECRET_ACCESS_KEY
 });
@@ -20,23 +20,16 @@ const mediaPackage = new AWS.MediaPackage()
 const cloudfront = new AWS.CloudFront()
 const ssm = new AWS.SSM()
 
-//MediaPackage config
-const mediaPackageEndpointConfigPath = "configurations/MediaPackage/CreateOriginEndpoint.json"
-const mediaPackageEndpointConfig = JSON.parse(fs.readFileSync(mediaPackageEndpointConfigPath, 'utf8'));
-
-//MediaLive config
-const mediaLiveChannelConfigPath = "configurations/MediaLive/CreateChannel.json"
-const mediaLiveChannelConfig = JSON.parse(fs.readFileSync(mediaLiveChannelConfigPath, 'utf8'));
-
-const mediaLiveInputConfigPath = "configurations/MediaLive/CreateInput.json"
-const mediaLiveInputConfig = JSON.parse(fs.readFileSync(mediaLiveInputConfigPath, 'utf8'));
-
-//CloudFront config
-const cloudfrontConfigPath = "configurations/CloudFront/Configuration.json"
-const cloudfrontConfig = JSON.parse(fs.readFileSync(cloudfrontConfigPath, 'utf8'));
 
 
-addNewStream()
+var params = {
+    ChannelId: '4865271' /* required */
+  };
+  mediaLive.describeChannel(params, function(err, data) {
+    if (err) console.log(err, err.stack); // an error occurred
+    else     console.log(JSON.stringify(data));           // successful response
+  });
+// addNewStream()
 //TODO ADD REMOVE STREAM
 //TODO full rollback system if any part fails, should remove all created ones. use a describer object {} to store all relevant ids and be ultimately returned
 async function addNewStream() {
