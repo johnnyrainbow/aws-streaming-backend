@@ -4,7 +4,7 @@
             "Items": [
                 {
                     "Key": "mediapackage:cloudfront_assoc",
-                    "Value": "arn:aws:mediapackage:eu-central-1:932393112262:channels/1065eda2d5784e54884f4e236a723b32"
+                    "Value": "INSERT_MEDIAPACKAGE_ARN_HERE"
                 }
             ]
         },

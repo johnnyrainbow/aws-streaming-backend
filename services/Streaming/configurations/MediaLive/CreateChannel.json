@@ -6,14 +6,14 @@
       "MediaPackageSettings": [],
       "Settings": [
         {
-          "PasswordParam": "/medialive/p1",
-          "Url": "https://f76230136f41cb8d.mediapackage.eu-central-1.amazonaws.com/in/v2/a356625b470c40b69628a69ccd172266/a356625b470c40b69628a69ccd172266/channel",
-          "Username": "dbe07ffb4acd492ca9b92de340011c15"
+          "PasswordParam": "INSERT_PASSWORD_PARAM_HERE",
+          "Url": "INSERT_URL_HERE",
+          "Username": "INSERT_USERNAME_HERE"
         },
         {
-          "PasswordParam": "/medialive/p2",
-          "Url": "https://22c854684df0e6ed.mediapackage.eu-central-1.amazonaws.com/in/v2/a356625b470c40b69628a69ccd172266/d3ad2e775ef34f45988bc4ed107e82a9/channel",
-          "Username": "d2b0fac1057645f3b40c488a6a1dd928"
+          "PasswordParam": "INSERT_PASSWORD_PARAM_HERE",
+          "Url": "INSERT_URL_HERE",
+          "Username": "INSERT_USERNAME_HERE"
         }
       ]
     }
@@ -743,7 +743,7 @@
   "InputSpecification": {
     "Codec": "AVC",
     "MaximumBitrate": "MAX_10_MBPS",
-    "Resolution": "HD"
+    "Resolution": "SD"
   },
   "LogLevel": "DISABLED",
   "Name": "LiveChannel",

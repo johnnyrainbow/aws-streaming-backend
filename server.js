@@ -9,6 +9,7 @@ const fs = require('fs');
 
 
 const StreamBuilder = require("./services/Streaming/StreamBuilder")
+const StreamDestroyer = require("./services/Streaming/StreamDestroyer")
 const port = process.env.PORT || 3000;
 
 AWS.config.update({
@@ -32,7 +33,7 @@ const awsDependencies = {
 
 //set dependencies
 StreamBuilder.dependencies.AWS = awsDependencies
-
+StreamDestroyer.dependencies.AWS = awsDependencies
 
 app.use(bodyParser.json({ verify: function (req, res, buf) { req.rawBody = buf } }))
 

@@ -1,4 +1,4 @@
-const Logger = require("../../Logger")
+const Logger = require("../../util/Logger")
 class RollbackHandler {
     constructor(rbClass) {
         this.rollbackStack = []

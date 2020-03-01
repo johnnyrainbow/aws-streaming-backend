@@ -6,16 +6,17 @@ const cloudfrontConfig = require("./configurations/CloudFront/Configuration.json
 const uuid = require("uuid")
 const RollbackHandler = require("./RollbackHandler")
 
-//TEMPORARY FOR TESTING
-// const { StreamDestroyer } = require("./StreamDestroyer")
 let dependencies = {}
 
-class StreamBuilder {
-    constructor() {
+class StreamDestroyer {
+    constructor(input) {
         this.rbHandler = new RollbackHandler(this)
+        this.input = input
     }
-    async build() {
+    async destroy() {
         try {
+            //TODO ENSURE MEDIALIVE NOT RUNNING STATE
+
             //MediaPackage creation
             const mpcResult = this.rbHandler.register(await this.createMediaPackageChannel())
             const mpoeResult = this.rbHandler.register(await this.createMediaPackageOriginEndpoint(mpcResult.chnlResult))
@@ -25,7 +26,7 @@ class StreamBuilder {
             const cmliResult = this.rbHandler.register(await this.createMediaLiveInput())
             const mlsspResult = this.rbHandler.register(await this.createMediaLiveSSMParameter(mpoeResult.IngestEndpoints))
             const mlcResult = this.rbHandler.register(await this.createMediaLiveChannel(cmliResult.input, mpoeResult.IngestEndpoints, mlsspResult.id))
-            // new StreamDestroyer().destroy()
+
         } catch (e) {
             //should do rollback here?
             this.rbHandler.confusedScreaming()
@@ -120,4 +121,4 @@ class StreamBuilder {
         return { name: "createMPOE", data: { endpntResult, IngestEndpoints } }
     }
 }
-module.exports = { StreamBuilder, dependencies }
+module.exports = { StreamDestroyer, dependencies }
